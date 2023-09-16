@@ -65,7 +65,7 @@ public class Section01DAOImpl implements Section01DAO {
 				+ "        FROM(\r\n"
 				+ "       SELECT DISTINCT t.tic_code, tic_time, tic_loc, tic_class, tic_prof, tic_back, "
 				+ "                            tic_name, tic_price, NVL2( (100-gw.gwon_sale)/100*tic_price, (100-gw.gwon_sale)/100*tic_price, tic_price ) as sale_pay, "
-				+ "                            tic_regist, sysdate - tic_regist as new_bar, tic_age, tic_run_ti, r.reg_name, "
+				+ "                            tic_regist, TRUNC(sysdate - tic_regist) as new_bar, tic_age, tic_run_ti, r.reg_name, "
 				+ "                            l.lcate_name, s.scate_name, "
 				+ "                            g.gen_name, gw.gwon_sale "
 				+ "                FROM ticket t LEFT JOIN region r ON t.reg_code = r.reg_code "
@@ -75,10 +75,11 @@ public class Section01DAOImpl implements Section01DAO {
 				+ "                            LEFT JOIN opt o ON o.tic_code = t.tic_code "
 				+ "                            LEFT JOIN gwon gw ON gw.o_code = o.o_code "
 				+ "                            LEFT JOIN registration regis  ON regis.regi_num = gw.regi_num "
-				+ "                WHERE t.tic_code = ? "
+				+ "                WHERE t.tic_code = ? and (gw.regi_num IS NULL OR sysdate BETWEEN regis.regi_stime and regis.regi_etime) "
 				+ "                 ) t "
 				+ "    ) s "
-				+ "WHERE seq = 1 " ;
+				+ "WHERE seq = 1 " 
+				+ "ORDER BY gwon_sale DESC " ;
 
 		
 		Section01DTO vdto = null;

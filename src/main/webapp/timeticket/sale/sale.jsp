@@ -341,7 +341,7 @@
       <div class="top_section_bg_round"></div>
 
       <section class="top_section_content">
-        <div class="content_toggle_btn" value="${param.type}"></div>
+        <div class="content_toggle_btn"  data-value="${param.type}"></div> 
         <div class="content_toggle">
           <div class="content_toggle_title">타임세일</div>
           <div class="content_toggle_title" style="color: white">오늘할인</div>
@@ -511,7 +511,7 @@ let todaySaleText = year+'.'+month+'.'+day+' '+WEEKDAY[date.getDay()];
         initialSlide: 0,
         on: {
           slideChange: () => {
-            let currentMode = toggleBtn.getAttribute('value');
+            let currentMode = toggleBtn.getAttribute("data-value");
             setPriceInfo(currentMode);
 
             // 상품 슬라이드 변경시 비동기로 데이터 변경해야함
@@ -538,12 +538,12 @@ let todaySaleText = year+'.'+month+'.'+day+' '+WEEKDAY[date.getDay()];
     }
     
     // in useToggle
-    function createSwiper(type) {
+    function createSwiper(promo) {
       setTimeout(() => {
       let promoContent;
-      if (type === 'timesale') {
+      if (promo === 'timesale') {
         promoContent = SLIDE_CONTENT.timesale;
-      } else if (type === 'todaysale') {
+      } else if (promo === 'todaysale') {
         promoContent = SLIDE_CONTENT.todaysale;
       }
       if (promoContent.length < 400) {
@@ -569,7 +569,7 @@ let todaySaleText = year+'.'+month+'.'+day+' '+WEEKDAY[date.getDay()];
       document.querySelector('.mySwiper').children[0].classList.add('swiper-wrapper')
       document.querySelector('.mySwiper').children[0].innerHTML = promoContent;
       setSwiper();
-     replaceListContent(type);
+     replaceListContent(promo);
     }, 400);
     }
     
@@ -597,8 +597,8 @@ let todaySaleText = year+'.'+month+'.'+day+' '+WEEKDAY[date.getDay()];
         centerContent.classList.toggle('today_sale_color2_active_bg');
         centerContentText.classList.toggle('today_sale_color1_active');
         
-        if (toggleBtn.getAttribute('value') === 'timesale' ) {
-          toggleBtn.setAttribute('value', 'todaysale')
+        if (toggleBtn.getAttribute("data-value") === 'timesale' ) {
+          toggleBtn.setAttribute('data-value', 'todaysale')
           toggleTitle[0].setAttribute('style', 'color: white');
           toggleTitle[1].setAttribute('style', 'color: black');
           removeAllSlide();
@@ -618,8 +618,8 @@ let todaySaleText = year+'.'+month+'.'+day+' '+WEEKDAY[date.getDay()];
             }
           }, 1000);
 
-        } else if (toggleBtn.getAttribute('value') === 'todaysale' ) {
-          toggleBtn.setAttribute('value', 'timesale')
+        } else if (toggleBtn.getAttribute("data-value") === 'todaysale' ) {
+          toggleBtn.setAttribute('data-value', 'timesale')
           toggleTitle[0].setAttribute('style', 'color: black');
           toggleTitle[1].setAttribute('style', 'color: white');
           removeAllSlide();
@@ -636,11 +636,11 @@ let todaySaleText = year+'.'+month+'.'+day+' '+WEEKDAY[date.getDay()];
       }
 
       // in createSwiper
-     function replaceListContent(type) {
+     function replaceListContent(promo) {
         let promoContent;
-        if (type === 'timesale') {
+        if (promo === 'timesale') {
           promoContent = LIST_CONTENT.timesale;
-        } else if (type === 'todaysale') {
+        } else if (promo === 'todaysale') {
           promoContent = LIST_CONTENT.todaysale;
         }
         let createTableDom = document.createElement('table');

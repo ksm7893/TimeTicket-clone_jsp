@@ -290,7 +290,7 @@ String contextPath = request.getContextPath();
 										<div class="thumb">
 											<img src="<%=contextPath%>/timeticket/images/${ldto.tic_prof}" alt="${ldto.tic_name }">
 											<div class="promo_badge">
-											<c:if test="${ldto.newb <= 7 }">
+											<c:if test="${0 <= ldto.newb && ldto.newb <= 7 }">
 											<span class="promo_new">NEW</span>
 											</c:if>
 											<c:if test="${not empty ldto.dgwon_name }">
@@ -308,17 +308,33 @@ String contextPath = request.getContextPath();
 											<c:when test="${ldto.lcate_code eq 'lcate_1'} ">${ldto.scate_name} </c:when>
 											<c:otherwise>${ldto.lcate_name }</c:otherwise>
 											</c:choose>
+											<c:if test="${ldto.lcate_code eq 'lcate_5' }">&gt; ${ldto.scate_name}</c:if>
 											<c:if test="${not empty ldto.gen_name }">&gt; ${ldto.gen_name }</c:if></p>
 											<p class="title">${ldto.tic_name }</p>
 											<div class="price">
 												<div>
-													<span class="stars">
-													<img src="<%=contextPath %>/timeticket/images/ico_star.png" alt="별점" />${ldto.ravg }
-													<span>(${ldto.rcount })</span>
-													</span>
+														<c:if test="${ 0 ne ldto.rcount }">
+																<div>
+														          <span class="stars" style=";">
+														            <img src="/timeticket/timeticket/images/ico_star.png" alt="별점">${ldto.ravg}
+														            <span>(${ldto.rcount})</span>
+														          </span>
+														          <span style="display:none;;"></span>
+														        </div>
+														   </c:if>     
+														 
+														 <c:if test="${ 0 eq ldto.rcount }">
+														 		<div>
+														          <span class="stars" style=";">
+														          </span>
+														          <span style="display:none;;"></span>
+														        </div>
+														 </c:if>
 												</div>
 												<div>
+												<c:if test="${ 0 ne ldto.msale }">
 													<span class="sale_percent">${ldto.msale }%</span>
+												</c:if>
 													<span class="baro_price">${ldto.stic_price }원</span>
 												</div>
 											</div>

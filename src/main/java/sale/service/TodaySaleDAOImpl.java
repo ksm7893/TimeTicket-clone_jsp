@@ -6,7 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 
 import com.util.JdbcUtil;
 
@@ -30,32 +29,25 @@ public class TodaySaleDAOImpl {
 		this.conn = conn;
 	}
 	
+	// 타임세일 데이터 
 	public String timesaleList(String contextPath) throws SQLException {
 		DecimalFormat df = new DecimalFormat("#,###");
 		
 		String tic_code;	
 		String reg_name;
-		String lcate_code;	
-		String scate_code;	
-		String scate_name;
-		String gen_code;	
-		String tic_time;		
-		String tic_loc;		
-		String tic_class;	
+		String scate_name;	
 		String tic_prof;	
 		String tic_name;
 		String gwon_names="";
 		int m_sale = 0;
-		int tic_price;
 		String sale_pay = "";
-		Date tic_regist;	
-		int tic_count;
 		Double areview = null;
 		int creview = 0;
 		Double new_bar=0.0;
 		System.out.println(contextPath);
-		// 인기순으로 정렬됨
-		String sql = " SELECT DISTINCT t.tic_code, reg_name, t.lcate_code, scate_name, gen_code, tic_time, tic_loc, tic_class, tic_prof, tic_name, tic_regist, tic_count "
+		
+		// 타임세일 티켓 종류
+		String sql = " SELECT DISTINCT t.tic_code, reg_name, scate_name, tic_prof, tic_name "
 				+ " FROM ticket t JOIN s_category s ON t.scate_code = s.scate_code "
 				+ "               JOIN region r ON t.reg_code = r.reg_code "
 				+ "               JOIN opt o ON t.tic_code = o.tic_code "
@@ -64,23 +56,26 @@ public class TodaySaleDAOImpl {
 				+ " WHERE s.lcate_code = 'lcate_1' AND gwon_name = '타임세일' AND sysdate BETWEEN regi_stime AND regi_etime "
 				+ " ORDER BY tic_code ";
 	      
+		// 티켓 평점, 후기
 	      String sql2 = " SELECT * "
 	            + " FROM (SELECT ROUND(AVG(rev_point), 1) as areview, COUNT(book_code) as creview,t.tic_code "
 	            + "       FROM ticket t JOIN review r ON t.tic_code =  r.tic_code "
 	            + "       GROUP BY t.tic_code)t "
 	            + " WHERE t.tic_code = ?";
-	      
+	    
+	   // 티켓 최대 할인율, 할인 가격
 	      String sql3 = " SELECT o.tic_code, MAX(gwon_sale) as m_sale, (100-MAX(gwon_sale))/100*tic_price as sale_pay "
-	      		+ " FROM ticket t JOIN opt o ON t.tic_code = o.tic_code "
-	      		+ "               JOIN gwon g ON g.o_code = o.o_code "
-	      		+ "               JOIN registration r ON g.regi_num = r.regi_num "
-	      		+ " WHERE t.tic_code = ? AND sysdate BETWEEN regi_stime AND regi_etime "
-		      	+ " GROUP BY o.tic_code, tic_price ";
+		      		+ " FROM ticket t JOIN opt o ON t.tic_code = o.tic_code "
+		      		+ "               JOIN gwon g ON g.o_code = o.o_code "
+		      		+ "               JOIN registration r ON g.regi_num = r.regi_num "
+		      		+ " WHERE t.tic_code = ? AND sysdate BETWEEN regi_stime AND regi_etime "
+			      	+ " GROUP BY o.tic_code, tic_price ";
 	      
+	    // 할인티켓 상단바 종류
 	      String sql4 = " WITH source "
 		      		+ " AS "
 		      		+ " ( "
-		      		+ "   SELECT DISTINCT t.tic_code, gwon_name, sysdate - tic_regist as new_bar "
+		      		+ "   SELECT DISTINCT t.tic_code, gwon_name, TRUNC(sysdate - tic_regist) as new_bar "
 		      		+ "   FROM ticket t JOIN opt o ON t.tic_code = o.tic_code "
 		      		+ "                 JOIN gwon g ON g.o_code = o.o_code "
 		      		+ "                 JOIN registration r ON g.regi_num = r.regi_num "
@@ -156,7 +151,7 @@ public class TodaySaleDAOImpl {
 	               		+ "          <div style='position:relative; overflow:hidden; border:1px solid #e5e5e5; width:250px; height:350px; border-radius:10px;'>"
 	               		+ "            <img src='/timeticket/timeticket/images/"+tic_prof+"' class='expand_img'  style='width:250px; height:350px; border-radius:8px;'>"
 	               				+ "<div style='position:absolute; top:15px; left:10px;'>";
-	               					if(new_bar<=7) {
+	               					if(new_bar>0 && new_bar<=7) {
 	               						timesaleList+="<span class='promo_new'>NEW</span>";
 	               					}
 	               					if(gwon_names.contains("오늘할인")) {
@@ -237,46 +232,41 @@ public class TodaySaleDAOImpl {
 		return timesaleList;
 	}
 	
+	// 오늘할인 데이터
 	public String todayList(String contextPath) throws SQLException {
 		DecimalFormat df = new DecimalFormat("#,###");
 		
 		String tic_code;	
 		String reg_name;
-		String lcate_code;	
-		String scate_code;	
 		String scate_name;
-		String gen_code;	
-		String tic_time;		
-		String tic_loc;		
-		String tic_class;	
 		String tic_prof;	
 		String tic_name;
 		String gwon_names="";
 		int m_sale = 0;
-		int tic_price;
 		String sale_pay = "";
-		Date tic_regist;	
-		int tic_count;
 		Double areview = null;
 		int creview = 0;
 		Double new_bar=0.0;
 		System.out.println(contextPath);
-		// 인기순으로 정렬됨
-		String sql = " SELECT DISTINCT t.tic_code, reg_name, t.lcate_code, scate_name, gen_code, tic_time, tic_loc, tic_class, tic_prof, tic_name, tic_regist, tic_count "
+		
+		// 오늘할인 티켓 종류
+		String sql = " SELECT DISTINCT t.tic_code, reg_name, scate_name, tic_prof, tic_name "
 				+ " FROM ticket t JOIN s_category s ON t.scate_code = s.scate_code "
 				+ "               JOIN region r ON t.reg_code = r.reg_code "
 				+ "               JOIN opt o ON t.tic_code = o.tic_code "
 				+ "               JOIN gwon g ON g.o_code = o.o_code "
 				+ "               JOIN registration e ON g.regi_num = e.regi_num "
-				+ " WHERE s.lcate_code = 'lcate_1' AND gwon_name = '오늘할인' "
+				+ " WHERE s.lcate_code = 'lcate_1' AND gwon_name = '오늘할인' AND sysdate BETWEEN regi_stime AND regi_etime "
 				+ " ORDER BY tic_code ";
 	      
+		// 티켓 평점, 후기
 	      String sql2 = " SELECT * "
 	            + " FROM (SELECT ROUND(AVG(rev_point), 1) as areview, COUNT(book_code) as creview,t.tic_code "
 	            + "       FROM ticket t JOIN review r ON t.tic_code =  r.tic_code "
 	            + "       GROUP BY t.tic_code)t "
 	            + " WHERE t.tic_code = ?";
-	      
+	     
+	    // 티켓 최대 할인율, 할인 가격
 	      String sql3 = " SELECT o.tic_code, MAX(gwon_sale) as m_sale, (100-MAX(gwon_sale))/100*tic_price as sale_pay "
 	      		+ " FROM ticket t JOIN opt o ON t.tic_code = o.tic_code "
 	      		+ "               JOIN gwon g ON g.o_code = o.o_code "
@@ -284,10 +274,11 @@ public class TodaySaleDAOImpl {
 	      		+ " WHERE t.tic_code = ? AND sysdate BETWEEN regi_stime AND regi_etime "
 		      	+ " GROUP BY o.tic_code, tic_price ";
 	      
+	    // 할인티켓 상단바 종류 
 	      String sql4 = " WITH source "
 		      		+ " AS "
 		      		+ " ( "
-		      		+ "   SELECT DISTINCT t.tic_code, gwon_name, sysdate - tic_regist as new_bar "
+		      		+ "   SELECT DISTINCT t.tic_code, gwon_name, TRUNC(sysdate - tic_regist) as new_bar "
 		      		+ "   FROM ticket t JOIN opt o ON t.tic_code = o.tic_code "
 		      		+ "                 JOIN gwon g ON g.o_code = o.o_code "
 		      		+ "                 JOIN registration r ON g.regi_num = r.regi_num "
@@ -363,12 +354,13 @@ public class TodaySaleDAOImpl {
 	               		+ "          <div style='position:relative; overflow:hidden; border:1px solid #e5e5e5; width:250px; height:350px; border-radius:10px;'>"
 	               		+ "            <img src='"+contextPath+"/timeticket/images/"+tic_prof+"' class='expand_img'  style='width:250px; height:350px; border-radius:8px;'>"
 	               				+ "<div style='position:absolute; top:15px; left:10px;'>";
-	               					if(new_bar<=7) {
+	               					if(new_bar>0 && new_bar<=7) {
 	               						todayList+="<span class='promo_new'>NEW</span>";
 	               					}
 									
-									  // if(gwon_names.contains("오늘할인")) {
-									  todayList+="<span class='promo_today'>오늘할인</span>"; // }
+									if(gwon_names.contains("오늘할인")) {
+									  todayList+="<span class='promo_today'>오늘할인</span>"; 
+									}
 									 
 	               					if(gwon_names.contains("타임세일")){
 	               						todayList+="<span class='promo_timesale'>타임세일</span>";

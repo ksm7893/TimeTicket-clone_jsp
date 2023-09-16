@@ -103,7 +103,6 @@ String contextPath = request.getContextPath();
       
 <c:forEach items="${newlist}" var="newdto" varStatus="loop">
 <c:set var="price" value="${newdto.stic_price}" />
-<c:if test="${newdto.regi_num eq 'regi_1'}">
 <c:if test="${loop.index < 10}">
 <li class="swiper-slide swiper-slide-active" role="group" style="width: 187.727px; margin-right: 15px;">
 	<a href="<%=contextPath %>/timeticket/detail/view.do?tic_code=${newdto.tic_code}" class="mmain_swipe_tickets">
@@ -111,20 +110,49 @@ String contextPath = request.getContextPath();
 			<div class="thum">
 				<img src="/timeticket/timeticket/images/${newdto.tic_prof}" alt="${newdto.tic_name}" onerror="/timeticket/timeticket/images/nothumb.jpg">
 				<div class="promo_badge">
-      	<c:if test="${timedto.dgwon_name eq '오늘할인'}">
-  		<span class="promo_today">오늘할인</span>
-		</c:if>
-		<c:if test="${timedto.tgwon_name eq '타임세일'}">
-  		<span class="promo_timesale">타임세일</span>
-		</c:if>
-		<c:if test="${timedto.newb <= 7}">
+      	
+		<c:if test="${0 <= newdto.newb && newdto.newb <= 7}">
   		<span class="promo_new2">NEW</span>
 		</c:if>		
+		<c:if test="${newdto.dgwon_name eq '오늘할인'}">
+  		<span class="promo_today">오늘할인</span>
+		</c:if>
+		<c:if test="${newdto.tgwon_name eq '타임세일'}">
+  		<span class="promo_timesale">타임세일</span>
+		</c:if>
+		
 				</div>
 			</div>
 			<div class="ticket_info">
 				<p class="area">${newdto.tic_loc}</p>
-				<p class="category">🗂️ ${newdto.scate_name} &gt; ${newdto.gen_name}</p>
+				
+				
+				<c:choose>
+		<c:when test="${newdto.lcate_name eq '공연'}">
+			<p class="category">🗂️ ${newdto.scate_name} &gt; ${newdto.gen_name}</p>
+		</c:when>
+		
+		<c:when test="${newdto.lcate_name eq '클래스'}">
+			<div class="now_engine">
+			<p class="category">🗂️ ${newdto.lcate_name} &gt; ${newdto.scate_name}</p>
+			</div>
+		</c:when>
+		
+		<c:when test="${newdto.lcate_name eq '키즈'}">
+			<div class="now_engine">
+			<p class="category">🗂️ ${newdto.lcate_name} &gt; ${newdto.gen_name}</p>
+			</div>
+		</c:when>
+		
+		<c:otherwise>
+			<div class="now_engine">
+			<p class="category">🗂️ ${newdto.lcate_name}</p>
+			</div>
+		</c:otherwise>
+	</c:choose>
+	
+	
+		
 				<p class="title">${newdto.tic_name}</p>
 			<c:choose>
                 <c:when test="${newdto.msale != 0}">
@@ -138,7 +166,6 @@ String contextPath = request.getContextPath();
 		</div>
 	</a>
 </li>
-</c:if>
 </c:if>
 </c:forEach>
 
@@ -177,15 +204,16 @@ String contextPath = request.getContextPath();
 		<div class="thum">
 			<img src="/timeticket/timeticket/images/${l3dto.tic_prof}" alt="${l3dto.tic_name}" onerror="/timeticket/timeticket/images/nothumb.jpg">
 			<div class="promo_badge">
-      	<c:if test="${timedto.dgwon_name eq '오늘할인'}">
-  		<span class="promo_today">오늘할인</span>
-		</c:if>
-		<c:if test="${timedto.tgwon_name eq '타임세일'}">
-  		<span class="promo_timesale">타임세일</span>
-		</c:if>
-		<c:if test="${timedto.newb <= 7}">
+			
+		<c:if test="${0 <= l3dto.newb && l3dto.newb <= 7}">
   		<span class="promo_new2">NEW</span>
 		</c:if>		
+		<c:if test="${ll3dto.dgwon_name eq '오늘할인'}">
+  		<span class="promo_today">오늘할인</span>
+		</c:if>
+		<c:if test="${l3dto.tgwon_name eq '타임세일'}">
+  		<span class="promo_timesale">타임세일</span>
+		</c:if>
 			
 			</div>
 		</div>
@@ -244,15 +272,16 @@ String contextPath = request.getContextPath();
 		<div class="thum">
 			<img src="/timeticket/timeticket/images/${l2dto.tic_prof}" alt="${l2dto.tic_name}" onerror="/timeticket/timeticket/images/nothumb.jpg">
 			<div class="promo_badge">
-      	<c:if test="${timedto.dgwon_name eq '오늘할인'}">
-  		<span class="promo_today">오늘할인</span>
-		</c:if>
-		<c:if test="${timedto.tgwon_name eq '타임세일'}">
-  		<span class="promo_timesale">타임세일</span>
-		</c:if>
-		<c:if test="${timedto.newb <= 7}">
+      	
+		<c:if test="${0 <= l2dto.newb && l2dto.newb <= 7}">
   		<span class="promo_new2">NEW</span>
 		</c:if>		
+		<c:if test="${l2dto.dgwon_name eq '오늘할인'}">
+  		<span class="promo_today">오늘할인</span>
+		</c:if>
+		<c:if test="${l2dto.tgwon_name eq '타임세일'}">
+  		<span class="promo_timesale">타임세일</span>
+		</c:if>
 			
 			</div>
 		</div>
@@ -311,21 +340,22 @@ String contextPath = request.getContextPath();
 		<div class="thum">
 			<img src="/timeticket/timeticket/images/${l5dto.tic_prof}" alt="${l5dto.tic_name}" onerror="/timeticket/timeticket/images/nothumb.jpg">
 			<div class="promo_badge">
-		<c:if test="${timedto.dgwon_name eq '오늘할인'}">
+		
+		<c:if test="${0 <= l5dto.newb && l5dto.newb <= 7}">
+  		<span class="promo_new2">NEW</span>
+		</c:if>	
+		<c:if test="${l5dto.dgwon_name eq '오늘할인'}">
   		<span class="promo_today">오늘할인</span>
 		</c:if>
-		<c:if test="${timedto.tgwon_name eq '타임세일'}">
+		<c:if test="${l5dto.tgwon_name eq '타임세일'}">
   		<span class="promo_timesale">타임세일</span>
-		</c:if>
-		<c:if test="${timedto.newb <= 7}">
-  		<span class="promo_new2">NEW</span>
-		</c:if>		
+		</c:if>	
 			
 			</div>
 		</div>
 		<div class="ticket_info">
 			<p class="area">${l5dto.tic_loc}</p>
-      <p class="category">🗂️ ${l5dto.lcate_name}</p>
+      <p class="category">🗂️ ${l5dto.lcate_name} &gt; ${l5dto.scate_name}</p>
 			<p class="title">${l5dto.tic_name}</p>
               <c:choose>
                 <c:when test="${l5dto.msale != 0}">
@@ -377,21 +407,22 @@ String contextPath = request.getContextPath();
 		<div class="thum">
 			<img src="/timeticket/timeticket/images/${kidsdto.tic_prof}" alt="${kidsdto.tic_name}" onerror="/timeticket/timeticket/images/nothumb.jpg">
 			<div class="promo_badge">
-		<c:if test="${timedto.dgwon_name eq '오늘할인'}">
-  		<span class="promo_today">오늘할인</span>
-		</c:if>
-		<c:if test="${timedto.tgwon_name eq '타임세일'}">
-  		<span class="promo_timesale">타임세일</span>
-		</c:if>
-		<c:if test="${timedto.newb <= 7}">
+		
+		<c:if test="${0 <= kidsdto.newb && kidsdto.newb <= 7}">
   		<span class="promo_new2">NEW</span>
 		</c:if>		
+		<c:if test="${kidsdto.dgwon_name eq '오늘할인'}">
+  		<span class="promo_today">오늘할인</span>
+		</c:if>
+		<c:if test="${kidsdto.tgwon_name eq '타임세일'}">
+  		<span class="promo_timesale">타임세일</span>
+		</c:if>
 			
 			</div>
 		</div>
 		<div class="ticket_info">
 			<p class="area">${kidsdto.tic_loc}</p>
-      <p class="category">🗂️ ${kidsdto.lcate_name}</p>
+      <p class="category">🗂️ ${kidsdto.lcate_name} &gt; 어린이 뮤지컬</p>
 			<p class="title">${kidsdto.tic_name}</p>
               <c:choose>
                 <c:when test="${kidsdto.msale != 0}">
@@ -515,15 +546,16 @@ String contextPath = request.getContextPath();
         <img src="/timeticket/timeticket/images/${timedto.tic_prof}" alt="${timedto.tic_name}" onerror="/timeticket/timeticket/images/nothumb.jpg">
       <div class="promo_badge">
       
-      	<c:if test="${timedto.dgwon_name eq '오늘할인'}">
+      	
+		<c:if test="${0 <= timedto.newb && timedto.newb <= 7}">
+  		<span class="promo_new2">NEW</span>
+		</c:if>	
+		<c:if test="${timedto.dgwon_name eq '오늘할인'}">
   		<span class="promo_today">오늘할인</span>
 		</c:if>
 		<c:if test="${timedto.tgwon_name eq '타임세일'}">
   		<span class="promo_timesale">타임세일</span>
-		</c:if>
-		<c:if test="${timedto.newb <= 7}">
-  		<span class="promo_new2">NEW</span>
-		</c:if>		
+		</c:if>	
 		
     </div>                                                                                                                      
     </div>
@@ -532,6 +564,8 @@ String contextPath = request.getContextPath();
       <p class="category">🗂️ ${timedto.scate_name} &gt; ${timedto.gen_name}</p>
 			<p class="title">${timedto.tic_name}</p>
       <div class="price">
+        
+ <c:if test="${ 0 ne timedto.rcount }">
         <div>
           <span class="stars" style=";">
             <img src="/timeticket/timeticket/images/ico_star.png" alt="별점">${timedto.ravg}
@@ -539,6 +573,17 @@ String contextPath = request.getContextPath();
           </span>
           <span style="display:none;;"></span>
         </div>
+   </c:if>     
+ 
+ <c:if test="${ 0 eq timedto.rcount }">
+ 		<div>
+          <span class="stars" style=";">
+          </span>
+          <span style="display:none;;"></span>
+        </div>
+ </c:if>
+ 
+         
         <div>
           <span class="sale_percent">${timedto.msale}%</span>
           <span class="baro_price"><fmt:formatNumber value="${price}" pattern="###,###원" /></span>
